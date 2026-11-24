@@ -211,7 +211,6 @@
     "contact.copyAria": "Copy email",
     "contact.copyPhoneAria": "Copy phone number",
     "contact.waHref": "https://wa.me/5493644223841?text=Hi%20Luca%2C%20I%20saw%20your%20portfolio.",
-    "contact.location": "Location",
     "contact.cv": "Resume in PDF",
     "cv.href": "assets/cv/Luca_Elizondo_CV_EN.pdf",
 

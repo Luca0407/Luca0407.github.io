@@ -2109,6 +2109,27 @@ a.contact-item:hover,
     margin-top: 12px;
   }
 
+  /* Foto chica: sin chips flotantes y tarjeta compacta, para no tapar la cara */
+  .chip-float {
+    display: none;
+  }
+
+  .portrait-card {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+  }
+
+  .portrait-card strong {
+    font-size: 14px;
+  }
+
+  .portrait-card span {
+    font-size: 9.5px;
+  }
+
   .section-head,
   .contact-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -2136,15 +2157,6 @@ a.contact-item:hover,
   /* La app arriba y sus botones juntos debajo */
   .store-app {
     flex-basis: 100%;
-  }
-
-  .chip-float.c1,
-  .chip-float.c3 {
-    left: -8px;
-  }
-
-  .chip-float.c2 {
-    right: -8px;
   }
 
   .stat {
