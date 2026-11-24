@@ -1,0 +1,15 @@
+# Configuración local de Claude Code e informes del consejo
+.claude/
+
+# Originales de capturas y mockups, y scripts para generarlos (no se publican)
+_fuentes/
+
+# Archivos del sistema y de editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Python (por si se corren los scripts dentro del repo)
+__pycache__/

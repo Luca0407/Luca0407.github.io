@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luca Elizondo — Desarrollador Flutter · Apps offline-first</title>
+  <meta name="description" content="Luca Elizondo, desarrollador Flutter de Chaco, Argentina. Apps offline-first en producción: guardan todo en el dispositivo, imprimen por Bluetooth y sincronizan cuando vuelve la señal." />
+  <meta name="author" content="Luca Elizondo" />
+  <meta name="theme-color" content="#0a0b0e" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Luca Elizondo — Desarrollador Flutter · Apps offline-first" />
+  <meta property="og:description" content="Apps Flutter que siguen funcionando sin señal: base local, cola de envíos, impresión térmica por Bluetooth y sincronización con la nube." />
+  <meta property="og:locale" content="es_AR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:url" content="https://luca0407.github.io/" />
+  <meta property="og:image" content="https://luca0407.github.io/assets/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Luca Elizondo, desarrollador Flutter: apps que siguen funcionando sin señal" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://luca0407.github.io/" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <script>
+    // Aplica tema e idioma antes de pintar, para evitar parpadeos.
+    // Idioma: ?lang=en|es  >  elección guardada  >  idioma del navegador.
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      var lang = "es";
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") d.setAttribute("data-theme", t);
+        var q = new URLSearchParams(window.location.search).get("lang");
+        var saved = localStorage.getItem("lang");
+        if (q === "es" || q === "en") lang = q;
+        else if (saved === "es" || saved === "en") lang = saved;
+        else if (!/^es\b/i.test(navigator.language || "es")) lang = "en";
+      } catch (e) {}
+      d.lang = lang; 
+      if (lang === "en") {
+        // Oculta la página hasta traducirla (con límite por si falla el script).
+        d.classList.add("i18n-pending");
+        setTimeout(function () { d.classList.remove("i18n-pending"); }, 1500);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido" data-i18n="skip">Saltar al contenido</a>
+
+  <!-- ============ Sprite de íconos y patrones ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" /></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" /></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" /></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="3" /><path d="m3.5 6.5 8.5 6.5 8.5-6.5" /></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6 5.6 1.9-5.6 1.9L12 18l-1.9-5.6-5.6-1.9 5.6-1.9z" /><path d="M19 3v4M17 5h4" /></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h6" /></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" /></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M3.2 20.8l1.44-4.55A8.5 8.5 0 1 1 8.01 19.5z" /><path fill="currentColor" stroke="none" transform="translate(6.6 6.6) scale(.45)" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M5 2h14a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM7 5.4a1.65 1.65 0 1 0 0 3.3 1.65 1.65 0 0 0 0-3.3zM5.6 10h2.8v8.6H5.6zM10.5 10h2.7v1.2c.5-.9 1.6-1.5 2.9-1.5 2.3 0 3.4 1.4 3.4 4v4.9h-2.8v-4.4c0-1.2-.4-1.9-1.4-1.9-1.1 0-1.6.8-1.6 2v4.3h-2.7z" /></symbol>
+    <!-- Tiendas de apps (Simple Icons, CC0) -->
+    <symbol id="i-googleplay" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z" /></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" /></symbol>
+    <!-- Íconos de proyectos -->
+    <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V2.5h12V9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" rx="1" /></symbol>
+    <!-- Logos de tecnologías (Simple Icons, CC0 · Devicon, MIT) -->
+    <symbol id="t-flutter" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z" /></symbol>
+    <symbol id="t-dart" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M4.105 4.105S9.158 1.58 11.684.316a3.079 3.079 0 0 1 1.481-.315c.766.047 1.677.788 1.677.788L24 9.948v9.789h-4.263V24H9.789l-9-9C.303 14.5 0 13.795 0 13.105c0-.319.18-.818.316-1.105l3.789-7.895zm.679.679v11.787c.002.543.021 1.024.498 1.508L10.204 23h8.533v-4.263L4.784 4.784zm12.055-.678c-.899-.896-1.809-1.78-2.74-2.643-.302-.267-.567-.468-1.07-.462-.37.014-.87.195-.87.195L6.341 4.105l10.498.001z" /></symbol>
+    <symbol id="t-firebase" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M19.455 8.369c-.538-.748-1.778-2.285-3.681-4.569-.826-.991-1.535-1.832-1.884-2.245a146 146 0 0 0-.488-.576l-.207-.245-.113-.133-.022-.032-.01-.005L12.57 0l-.609.488c-1.555 1.246-2.828 2.851-3.681 4.64-.523 1.064-.864 2.105-1.043 3.176-.047.241-.088.489-.121.738-.209-.017-.421-.028-.632-.033-.018-.001-.035-.002-.059-.003a7.46 7.46 0 0 0-2.28.274l-.317.089-.163.286c-.765 1.342-1.198 2.869-1.252 4.416-.07 2.01.477 3.954 1.583 5.625 1.082 1.633 2.61 2.882 4.42 3.611l.236.095.071.025.003-.001a9.59 9.59 0 0 0 2.941.568q.171.006.342.006c1.273 0 2.513-.249 3.69-.742l.008.004.313-.145a9.63 9.63 0 0 0 3.927-3.335c1.01-1.49 1.577-3.234 1.641-5.042.075-2.161-.643-4.304-2.133-6.371m-7.083 6.695c.328 1.244.264 2.44-.191 3.558-1.135-1.12-1.967-2.352-2.475-3.665-.543-1.404-.87-2.74-.974-3.975.48.157.922.366 1.315.622 1.132.737 1.914 1.902 2.325 3.461zm.207 6.022c.482.368.99.712 1.513 1.028-.771.21-1.565.302-2.369.273a8 8 0 0 1-.373-.022c.458-.394.869-.823 1.228-1.279zm1.347-6.431c-.516-1.957-1.527-3.437-3.002-4.398-.647-.421-1.385-.741-2.194-.95.011-.134.026-.268.043-.4.014-.113.03-.216.046-.313.133-.689.332-1.37.589-2.025.099-.25.206-.499.321-.74l.004-.008c.177-.358.376-.719.61-1.105l.092-.152-.003-.001c.544-.851 1.197-1.627 1.942-2.311l.288.341c.672.796 1.304 1.548 1.878 2.237 1.291 1.549 2.966 3.583 3.612 4.48 1.277 1.771 1.893 3.579 1.83 5.375-.049 1.395-.461 2.755-1.195 3.933-.694 1.116-1.661 2.05-2.8 2.708-.636-.318-1.559-.839-2.539-1.599.79-1.575.952-3.28.479-5.072zm-2.575 5.397c-.725.939-1.587 1.55-2.09 1.856-.081-.029-.163-.06-.243-.093l-.065-.026c-1.49-.616-2.747-1.656-3.635-3.01-.907-1.384-1.356-2.993-1.298-4.653.041-1.19.338-2.327.882-3.379.316-.07.638-.114.96-.131l.084-.002c.162-.003.324-.003.478 0 .227.011.454.035.677.07.073 1.513.445 3.145 1.105 4.852.637 1.644 1.694 3.162 3.144 4.515z" /></symbol>
+    <symbol id="t-csharp" viewBox="0 0 128 128"><path fill="currentColor" stroke="none" d="M117.5 33.5l.3-.2c-.6-1.1-1.5-2.1-2.4-2.6L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.3.9 3.4l-.2.1c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c.1-.8 0-1.7-.4-2.6zm-53.5 70c-21.8 0-39.5-17.7-39.5-39.5S42.2 24.5 64 24.5c14.7 0 27.5 8.1 34.3 20l-13 7.5C81.1 44.5 73.1 39.5 64 39.5c-13.5 0-24.5 11-24.5 24.5s11 24.5 24.5 24.5c9.1 0 17.1-5 21.3-12.4l12.9 7.6c-6.8 11.8-19.6 19.8-34.2 19.8zM115 62h-3.2l-.9 4h4.1v5h-5l-1.2 6h-4.9l1.2-6h-3.8l-1.2 6h-4.8l1.2-6H94v-5h3.5l.9-4H94v-5h5.3l1.2-6h4.9l-1.2 6h3.8l1.2-6h4.8l-1.2 6h2.2v5zm-12.7 4h3.8l.9-4h-3.8z" /></symbol>
+    <symbol id="t-dotnet" viewBox="0 0 24 24"><mask id="t-dotnet-m"><rect width="24" height="24" fill="#fff" stroke="none" /><path fill="#000" stroke="none" transform="translate(3.51 3.65) scale(0.7)" d="M24 8.77h-2.468v7.565h-1.425V8.77h-2.462V7.53H24zm-6.852 7.565h-4.821V7.53h4.63v1.24h-3.205v2.494h2.953v1.234h-2.953v2.604h3.396zm-6.708 0H8.882L4.78 9.863a2.896 2.896 0 0 1-.258-.51h-.036c.032.189.048.592.048 1.21v5.772H3.157V7.53h1.659l3.965 6.32c.167.261.275.442.323.54h.024c-.04-.233-.06-.629-.06-1.185V7.529h1.372zm-8.703-.693a.868.829 0 0 1-.869.829.868.829 0 0 1-.868-.83.868.829 0 0 1 .868-.828.868.829 0 0 1 .869.829Z" /></mask><rect width="24" height="24" rx="4" fill="currentColor" stroke="none" mask="url(#t-dotnet-m)" /></symbol>
+    <symbol id="t-python" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z" /></symbol>
+    <symbol id="t-php" viewBox="0 4.5 24 15"><path fill="currentColor" stroke="none" d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312zm-3.26 7.451c-.261.25-.575.438-.917.551-.336.108-.765.164-1.285.164H5.357l-.327 1.681H3.652l1.23-6.326h2.65c.797 0 1.378.209 1.744.628.366.418.476 1.002.33 1.752a2.836 2.836 0 0 1-.305.847c-.143.255-.33.49-.561.703zm4.024.715l.543-2.799c.063-.318.039-.536-.068-.651-.107-.116-.336-.174-.687-.174H11.46l-.704 3.625H9.388l1.23-6.327h1.367l-.327 1.682h1.218c.767 0 1.295.134 1.586.401s.378.7.263 1.299l-.572 2.944h-1.389zm7.597-2.265a2.782 2.782 0 0 1-.305.847c-.143.255-.33.49-.561.703a2.44 2.44 0 0 1-.917.551c-.336.108-.765.164-1.286.164h-1.18l-.327 1.682h-1.378l1.23-6.326h2.649c.797 0 1.378.209 1.744.628.366.417.477 1.001.331 1.751zM17.766 10.207h-.943l-.516 2.648h.838c.557 0 .971-.105 1.242-.314.272-.21.455-.559.551-1.049.092-.47.049-.802-.125-.995s-.524-.29-1.047-.29z" /></symbol>
+    <symbol id="t-mysql" viewBox="0 0 128 128"><path fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round" d="M117.688 98.242c-6.973-.191-12.297.461-16.852 2.379-1.293.547-3.355.559-3.566 2.18.711.746.82 1.859 1.387 2.777 1.086 1.754 2.922 4.113 4.559 5.352 1.789 1.348 3.633 2.793 5.551 3.961 3.414 2.082 7.223 3.27 10.504 5.352 1.938 1.23 3.859 2.777 5.75 4.164.934.684 1.563 1.75 2.773 2.18v-.195c-.637-.812-.801-1.93-1.387-2.777l-2.578-2.578c-2.52-3.344-5.719-6.281-9.117-8.719-2.711-1.949-8.781-4.578-9.91-7.73l-.199-.199c1.922-.219 4.172-.914 5.949-1.391 2.98-.797 5.645-.59 8.719-1.387l4.164-1.187v-.793c-1.555-1.594-2.664-3.707-4.359-5.152-4.441-3.781-9.285-7.555-14.273-10.703-2.766-1.746-6.184-2.883-9.117-4.363-.988-.496-2.719-.758-3.371-1.586-1.539-1.961-2.379-4.449-3.566-6.738-2.488-4.793-4.93-10.023-7.137-15.066-1.504-3.437-2.484-6.828-4.359-9.91-9-14.797-18.687-23.73-33.695-32.508-3.195-1.867-7.039-2.605-11.102-3.57l-6.543-.395c-1.332-.555-2.715-2.184-3.965-2.977C16.977 3.52 4.223-3.312.539 5.672-1.785 11.34 4.016 16.871 6.09 19.746c1.457 2.012 3.32 4.273 4.359 6.539.688 1.492.805 2.984 1.391 4.559 1.438 3.883 2.695 8.109 4.559 11.695.941 1.816 1.98 3.727 3.172 5.352.727.996 1.98 1.438 2.18 2.973-1.227 1.715-1.297 4.375-1.984 6.543-3.098 9.77-1.926 21.91 2.578 29.137 1.383 2.223 4.641 6.98 9.117 5.156 3.918-1.598 3.043-6.539 4.164-10.902.254-.988.098-1.715.594-2.379v.199l3.57 7.133c2.641 4.254 7.324 8.699 11.297 11.699 2.059 1.555 3.68 4.242 6.344 5.152v-.199h-.199c-.516-.805-1.324-1.137-1.98-1.781-1.551-1.523-3.277-3.414-4.559-5.156-3.613-4.902-6.805-10.27-9.711-15.855-1.391-2.668-2.598-5.609-3.77-8.324-.453-1.047-.445-2.633-1.387-3.172-1.281 1.988-3.172 3.598-4.164 5.945-1.582 3.754-1.789 8.336-2.375 13.082-.348.125-.195.039-.398.199-2.762-.668-3.73-3.508-4.758-5.949-2.594-6.164-3.078-16.09-.793-23.191.59-1.836 3.262-7.617 2.18-9.316-.516-1.691-2.219-2.672-3.172-3.965-1.18-1.598-2.355-3.703-3.172-5.551-2.125-4.805-3.113-10.203-5.352-15.062-1.07-2.324-2.875-4.676-4.359-6.738-1.645-2.289-3.484-3.977-4.758-6.742-.453-.984-1.066-2.559-.398-3.566.215-.684.516-.969 1.191-1.191 1.148-.887 4.352.297 5.547.793 3.18 1.32 5.832 2.578 8.527 4.363 1.289.855 2.598 2.512 4.16 2.973h1.785c2.789.641 5.914.195 8.523.988 4.609 1.402 8.738 3.582 12.488 5.949 11.422 7.215 20.766 17.48 27.156 29.734 1.027 1.973 1.473 3.852 2.379 5.945 1.824 4.219 4.125 8.559 5.941 12.688 1.816 4.113 3.582 8.27 6.148 11.695 1.348 1.801 6.551 2.766 8.918 3.766 1.66.699 4.379 1.43 5.949 2.379 3 1.809 5.906 3.965 8.723 5.945 1.402.992 5.73 3.168 5.945 4.957zm-88.605-75.52c-1.453-.027-2.48.156-3.566.395v.199h.195c.695 1.422 1.918 2.34 2.777 3.566l1.98 4.164.199-.195c1.227-.867 1.789-2.25 1.781-4.363-.492-.52-.562-1.164-.992-1.785-.562-.824-1.66-1.289-2.375-1.98zm0 0" /></symbol>
+    <symbol id="t-sqlite" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M21.678.521c-1.032-.92-2.28-.55-3.513.544a8.71 8.71 0 0 0-.547.535c-2.109 2.237-4.066 6.38-4.674 9.544.237.48.422 1.093.544 1.561a13.044 13.044 0 0 1 .164.703s-.019-.071-.096-.296l-.05-.146a1.689 1.689 0 0 0-.033-.08c-.138-.32-.518-.995-.686-1.289-.143.423-.27.818-.376 1.176.484.884.778 2.4.778 2.4s-.025-.099-.147-.442c-.107-.303-.644-1.244-.772-1.464-.217.804-.304 1.346-.226 1.478.152.256.296.698.422 1.186.286 1.1.485 2.44.485 2.44l.017.224a22.41 22.41 0 0 0 .056 2.748c.095 1.146.273 2.13.5 2.657l.155-.084c-.334-1.038-.47-2.399-.41-3.967.09-2.398.642-5.29 1.661-8.304 1.723-4.55 4.113-8.201 6.3-9.945-1.993 1.8-4.692 7.63-5.5 9.788-.904 2.416-1.545 4.684-1.931 6.857.666-2.037 2.821-2.912 2.821-2.912s1.057-1.304 2.292-3.166c-.74.169-1.955.458-2.362.629-.6.251-.762.337-.762.337s1.945-1.184 3.613-1.72C21.695 7.9 24.195 2.767 21.678.521m-18.573.543A1.842 1.842 0 0 0 1.27 2.9v16.608a1.84 1.84 0 0 0 1.835 1.834h9.418a22.953 22.953 0 0 1-.052-2.707c-.006-.062-.011-.141-.016-.2a27.01 27.01 0 0 0-.473-2.378c-.121-.47-.275-.898-.369-1.057-.116-.197-.098-.31-.097-.432 0-.12.015-.245.037-.386a9.98 9.98 0 0 1 .234-1.045l.217-.028c-.017-.035-.014-.065-.031-.097l-.041-.381a32.8 32.8 0 0 1 .382-1.194l.2-.019c-.008-.016-.01-.038-.018-.053l-.043-.316c.63-3.28 2.587-7.443 4.8-9.791.066-.069.133-.128.198-.194Z" /></symbol>
+    <symbol id="t-git" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187" /></symbol>
+    <symbol id="t-googlemaps" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M19.527 4.799c1.212 2.608.937 5.678-.405 8.173-1.101 2.047-2.744 3.74-4.098 5.614-.619.858-1.244 1.75-1.669 2.727-.141.325-.263.658-.383.992-.121.333-.224.673-.34 1.008-.109.314-.236.684-.627.687h-.007c-.466-.001-.579-.53-.695-.887-.284-.874-.581-1.713-1.019-2.525-.51-.944-1.145-1.817-1.79-2.671L19.527 4.799zM8.545 7.705l-3.959 4.707c.724 1.54 1.821 2.863 2.871 4.18.247.31.494.622.737.936l4.984-5.925-.029.01c-1.741.601-3.691-.291-4.392-1.987a3.377 3.377 0 0 1-.209-.716c-.063-.437-.077-.761-.004-1.198l.001-.007zM5.492 3.149l-.003.004c-1.947 2.466-2.281 5.88-1.117 8.77l4.785-5.689-.058-.05-3.607-3.035zM14.661.436l-3.838 4.563a.295.295 0 0 1 .027-.01c1.6-.551 3.403.15 4.22 1.626.176.319.323.683.377 1.045.068.446.085.773.012 1.22l-.003.016 3.836-4.561A8.382 8.382 0 0 0 14.67.439l-.009-.003zM9.466 5.868L14.162.285l-.047-.012A8.31 8.31 0 0 0 11.986 0a8.439 8.439 0 0 0-6.169 2.766l-.016.018 3.665 3.084z" /></symbol>
+    <symbol id="t-bluetooth" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 0C6.76 0 3.1484 2.4895 3.1484 12S6.76 24 12 24c5.24 0 8.8516-2.4895 8.8516-12S17.24 0 12 0zm-.7773 1.6816l6.2148 6.2149L13.334 12l4.1035 4.1035-6.2148 6.2149V14.125l-3.418 3.42-1.2422-1.2442L10.8515 12l-4.289-4.3008 1.2422-1.2441 3.418 3.4199V1.6816zm1.748 4.2442v3.9687l1.9844-1.9843-1.9844-1.9844zm0 8.1816v3.9668l1.9844-1.9844-1.9844-1.9824Z" /></symbol>
+    <symbol id="t-claude" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" /></symbol>
+    <symbol id="t-hostinger" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M16.415 0v7.16l5.785 3.384V2.949L16.415 0ZM1.8 0v11.237h18.815L14.89 8.09l-7.457-.003V3.024L1.8 0Zm14.615 20.894v-5.019l-7.514-.005c.007.033-5.82-3.197-5.82-3.197l19.119.091V24l-5.785-3.106ZM1.8 13.551v7.343l5.633 2.949v-6.988L1.8 13.551Z" /></symbol>
+    <!-- Íconos de conceptos del stack (Lucide, ISC) -->
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" /><circle cx="12" cy="13" r="3" /></symbol>
+    <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="m2 2 20 20" /><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193" /><path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07" /></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3M21 21v.01M12 7v3a2 2 0 0 1-2 2H7M3 12h.01M12 3h.01M12 16v.01M16 12h1M21 12v.01M12 21v-1" /></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8M16 13H8M16 17H8" /></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
+  </svg>
+
+  <div class="bg-decor bg-decor--top" aria-hidden="true"></div>
+  <div class="bg-decor bg-decor--bottom" aria-hidden="true"></div>
+
+  <!-- ============ Navegación ============ -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#inicio" aria-label="Luca Elizondo, volver al inicio" data-i18n-attr="aria-label:a11y.home">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="brand-mark-text">LE</span>
+          <svg class="brand-mark-arrow" viewBox="0 0 24 24"><use href="#i-arrow-up" /></svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Luca Elizondo</span>
+          <span class="brand-role">Flutter · Offline-first</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" id="nav-links" aria-label="Secciones" data-i18n-attr="aria-label:a11y.sections">
+        <a href="#proyectos" data-i18n="nav.projects">Proyectos</a>
+        <a href="#proceso" data-i18n="nav.process">Proceso</a>
+        <a href="#experiencia" data-i18n="nav.experience">Experiencia</a>
+        <a href="#stack" data-i18n="nav.stack">Stack</a>
+        <a href="#contacto" data-i18n="nav.contact">Contacto</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="lang-toggle" type="button" data-lang-toggle aria-label="Switch to English">
+          <span class="lang-opt" data-lang="es">ES</span>
+          <span class="lang-opt" data-lang="en">EN</span>
+        </button>
+        <button class="icon-btn theme-toggle" type="button" aria-label="Cambiar a tema claro">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-moon" /></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-sun" /></svg>
+        </button>
+        <button class="icon-btn menu-toggle" type="button" aria-label="Abrir menú" data-i18n-attr="aria-label:a11y.menu" aria-expanded="false" aria-controls="nav-links">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><use href="#i-menu" /></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <!-- ============ Hero ============ -->
+    <section class="hero" id="inicio">
+      <div class="bg-glow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="hero-grid">
+          <div class="reveal">
+            <span class="badge"><span class="pulse" aria-hidden="true"></span><span data-i18n="hero.badge">Disponible para proyectos o un puesto en una empresa</span></span>
+            <h1 data-i18n="hero.title">Apps Flutter que siguen funcionando <span class="hl">sin señal.</span></h1>
+            <p class="hero-sub" data-i18n="hero.sub">Me especializo en apps para el trabajo en la calle y en el mostrador: guardan todo en el dispositivo, imprimen comprobantes por Bluetooth, usan la cámara y sincronizan cuando vuelve la conexión. Hoy las usan inspectores municipales, conductores y comercios.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#proyectos">
+                <span data-i18n="hero.cta">Ver proyectos</span>
+                <span class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-down" /></svg></span>
+              </a>
+              <a class="btn btn-ghost" href="#contacto" data-i18n="hero.contact">Contactar</a>
+              <a class="btn btn-ghost" href="assets/cv/Luca_Elizondo_CV_ES.pdf" target="_blank" rel="noopener" data-i18n="hero.cv" data-i18n-attr="href:cv.href">Ver CV (PDF)</a>
+            </div>
+          </div>
+
+          <div class="portrait reveal">
+            <div class="portrait-frame">
+              <img src="assets/foto.webp" alt="Luca Elizondo" width="800" height="1000" decoding="async" fetchpriority="high" />
+              <div class="portrait-card">
+                <div>
+                  <strong>Luca Elizondo</strong>
+                  <span>Flutter · Offline-first</span>
+                </div>
+                <i class="dot" aria-hidden="true"></i>
+              </div>
+            </div>
+            <span class="chip-float c1" aria-hidden="true">&lt;Dart/&gt;</span>
+            <span class="chip-float c2" aria-hidden="true">Flutter ✦</span>
+            <span class="chip-float c3" aria-hidden="true">Offline-first</span>
+          </div>
+        </div>
+
+        <dl class="stats reveal">
+          <div class="stat">
+            <dt class="sr-only" data-i18n="stat1.dt">Sistemas para clientes</dt>
+            <dd class="stat-value">4</dd>
+            <dd class="stat-label" data-i18n="stat1.label">sistemas desarrollados para clientes</dd>
+          </div>
+          <div class="stat">
+            <dt class="sr-only" data-i18n="stat2.dt">Tests en SGM</dt>
+            <dd class="stat-value">540<span class="unit">+</span></dd>
+            <dd class="stat-label" data-i18n="stat2.label">tests automatizados en SGM, la app municipal</dd>
+          </div>
+          <div class="stat">
+            <dt class="sr-only" data-i18n="stat3.dt">Plataformas</dt>
+            <dd class="stat-value">4</dd>
+            <dd class="stat-label" data-i18n="stat3.label">plataformas: Android, iOS, Windows y web</dd>
+          </div>
+          <div class="stat">
+            <dt class="sr-only" data-i18n="stat4.dt">Idiomas</dt>
+            <dd class="stat-value">C<span class="unit">1</span></dd>
+            <dd class="stat-label" data-i18n="stat4.label">nivel de inglés · español nativo</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============ Marquee de tecnologías ============ -->
+    <div class="marquee" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+      <div class="marquee-track">
+        <ul class="marquee-group">
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#47c5fb;--cl:#027dfd" aria-hidden="true"><use href="#t-flutter" /></svg>Flutter</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#00b4ab" aria-hidden="true"><use href="#t-dart" /></svg>Dart</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Firebase</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#a179dc" aria-hidden="true"><use href="#t-csharp" /></svg>C#</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#6d4cf0" aria-hidden="true"><use href="#t-dotnet" /></svg>.NET</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#ffd43b;--cl:#3776ab" aria-hidden="true"><use href="#t-python" /></svg>Python</li>
+          <li class="marquee-item"><svg class="marquee-logo marquee-logo--wide" style="--c:#8892bf" aria-hidden="true"><use href="#t-php" /></svg>PHP</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#00a2c4" aria-hidden="true"><use href="#t-mysql" /></svg>MySQL</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#4aa3df" aria-hidden="true"><use href="#t-sqlite" /></svg>SQLite</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#f05032" aria-hidden="true"><use href="#t-git" /></svg>Git</li>
+        </ul>
+        <ul class="marquee-group" aria-hidden="true">
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#47c5fb;--cl:#027dfd" aria-hidden="true"><use href="#t-flutter" /></svg>Flutter</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#00b4ab" aria-hidden="true"><use href="#t-dart" /></svg>Dart</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Firebase</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#a179dc" aria-hidden="true"><use href="#t-csharp" /></svg>C#</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#6d4cf0" aria-hidden="true"><use href="#t-dotnet" /></svg>.NET</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#ffd43b;--cl:#3776ab" aria-hidden="true"><use href="#t-python" /></svg>Python</li>
+          <li class="marquee-item"><svg class="marquee-logo marquee-logo--wide" style="--c:#8892bf" aria-hidden="true"><use href="#t-php" /></svg>PHP</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#00a2c4" aria-hidden="true"><use href="#t-mysql" /></svg>MySQL</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#4aa3df" aria-hidden="true"><use href="#t-sqlite" /></svg>SQLite</li>
+          <li class="marquee-item"><svg class="marquee-logo" style="--c:#f05032" aria-hidden="true"><use href="#t-git" /></svg>Git</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ Sobre mí ============ -->
+    <section class="section about" id="sobre-mi" aria-labelledby="sobre-mi-title">
+      <div class="container">
+        <div class="about-grid reveal">
+          <h2 class="eyebrow" id="sobre-mi-title" data-i18n="about.eyebrow">Sobre mí</h2>
+          <div>
+            <p class="about-text" data-i18n="about.text">Soy <strong>Luca Elizondo</strong>, desarrollador Flutter radicado en Chaco, Argentina. Desarrollé sistemas para <strong>una municipalidad, una organización gremial y dos comercios</strong> y, en dupla con otro desarrollador, los de <strong>dos remiserías</strong>. En SGM, la app municipal, respaldé el desarrollo con más de 540 tests automatizados.</p>
+            <p class="about-edu" data-i18n="about.edu">Mi formación combina la <strong>carrera</strong> (Tecnicatura Superior en Desarrollo de Software), <strong>cursos</strong> que realicé de forma autodidacta y <strong>proyectos</strong>, tanto propios como trabajos remunerados para clientes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Proyectos ============ -->
+    <section class="section" id="proyectos" aria-labelledby="proyectos-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="projects.eyebrow">Proyectos seleccionados</p>
+            <h2 class="section-title" id="proyectos-title" data-i18n="projects.title">Sistemas reales, <span class="hl">en uso.</span></h2>
+          </div>
+          <p class="section-lead" data-i18n="projects.lead">Una aplicación municipal, dos ecosistemas de remises, un sistema de escritorio en producción y un producto propio. En todos participé del relevamiento, la arquitectura, el desarrollo y la entrega; los de remises los hice en dupla con otro desarrollador.</p>
+        </div>
+
+        <div class="projects">
+          <!-- ===== 01 · SGM ===== -->
+          <article class="project reveal" style="--h:200">
+            <div class="project-body">
+              <p class="project-kicker" data-i18n="p1.kicker"><b>01 / 05</b> · App móvil · Android</p>
+              <div class="project-title">
+                <span class="project-icon project-icon--logo"><img src="assets/sgm/logo.webp" alt="" width="56" height="56" /></span>
+                <h3>SGM <span class="project-sub" data-i18n="p1.sub">Sistema de Gestión Municipal</span></h3>
+              </div>
+              <div class="status-row">
+                <span class="status status--live" data-i18n="p1.status">En producción</span>
+                <span class="status status--muted" data-i18n="status.private">Código privado</span>
+              </div>
+              <p class="project-desc" data-i18n="p1.desc">Aplicación para inspectores de una municipalidad de Chaco, que permite labrar actas de infracción en la vía pública con registro fotográfico e imprimirlas en el momento mediante una impresora térmica portátil. Estuve a cargo del desarrollo integral de la aplicación.</p>
+              <p class="decision" data-i18n="p1.decision"><b>Sin duplicados:</b> cada acta lleva una clave única generada en el teléfono, así reenviarla después de un corte de señal no crea otra. Si el servidor rechaza un dato, el acta vuelve al inspector en el paso a corregir.</p>
+              <ul class="checks">
+                <li data-i18n="p1.c2">Offline-first: base local con Drift/SQLite, borradores recuperables, bandeja de envíos y sincronización de catálogos con la API .NET</li>
+                <li data-i18n="p1.c3">Cámara de evidencia propia, envío multipart de fotos e impresión de tickets con código de barras y QR por Bluetooth</li>
+                <li data-i18n="p1.c4">Actualización in-app del APK, entornos aislados por flavor, sesión segura y más de 540 tests de unidad, widgets y contratos</li>
+              </ul>
+              <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+                <li>Flutter</li><li>Dart</li><li>BLoC / Cubit</li><li>Drift · SQLite</li><li>API REST · .NET</li><li>Bluetooth ESC/POS</li><li>FCM</li>
+              </ul>
+              <div class="project-foot">
+                <p class="role" data-i18n="p1.role"><b>Rol:</b> Mobile Developer · responsable integral de la aplicación</p>
+              </div>
+            </div>
+            <figure class="project-visual">
+              <div class="phone phone--photo" data-slideshow role="img" aria-label="Capturas de SGM: inicio de sesión, menú principal y primer paso de una nueva multa de tránsito" data-i18n-attr="aria-label:p1.aria">
+                <div class="phone-screen">
+                  <div class="phone-slide is-active"><img src="assets/sgm/photo-1.webp" alt="" width="566" height="958" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide"><img src="assets/sgm/photo-2.webp" alt="" width="566" height="958" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide"><img src="assets/sgm/photo-3.webp" alt="" width="566" height="958" loading="lazy" decoding="async" /></div>
+                </div>
+                <img class="phone-frame" src="assets/phone-photo-frame.webp" alt="" width="566" height="958" />
+              </div>
+              <figcaption class="visual-label" data-i18n="visual.shots">Capturas de la app · código privado</figcaption>
+            </figure>
+          </article>
+
+          <!-- ===== 02 · Tu Remis SP ===== -->
+          <article class="project reveal" style="--h:42">
+            <div class="project-body">
+              <p class="project-kicker" data-i18n="p2.kicker"><b>02 / 05</b> · Apps móviles · Android &amp; iOS</p>
+              <div class="project-title">
+                <span class="project-icon project-icon--logo"><img src="assets/trsp/logo.webp" alt="" width="56" height="56" /></span>
+                <h3>Tu Remis SP <span class="project-sub" data-i18n="p2.sub">Pasajeros y conductores</span></h3>
+              </div>
+              <div class="status-row">
+                <span class="status status--live" data-i18n="p2.status">Publicada</span>
+                <span class="status status--muted" data-i18n="status.private">Código privado</span>
+              </div>
+              <p class="project-desc" data-i18n="p2.desc">Ecosistema de dos aplicaciones, una para pasajeros y otra para conductores, que permite solicitar un remis, seguir el viaje en el mapa y compartirlo en tiempo real. Incluye además un sistema SOS que se comunica con un número de emergencia.</p>
+              <p class="decision" data-i18n="p2.decision"><b>Aceptar un viaje:</b> es una transacción de Firestore que solo lo asigna si sigue pendiente; si otro conductor lo tomó antes, la app le avisa que ya fue tomado.</p>
+              <ul class="checks">
+                <li data-i18n="p2.c1">Viajes, estados y ubicación del conductor sincronizados en vivo con Cloud Firestore</li>
+                <li data-i18n="p2.c3">Seguimiento del viaje compartible mediante enlace: deep links, Cloud Function de redirección y página en Firebase Hosting</li>
+                <li data-i18n="p2.c4">Inicio de sesión por email con verificación por SMS, notificaciones locales y actualización forzada con Remote Config</li>
+              </ul>
+              <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+                <li>Flutter</li><li>Dart</li><li>Firebase</li><li>Cloud Functions</li><li>Google Maps</li><li>Remote Config</li>
+              </ul>
+              <div class="project-foot">
+                <p class="role" data-i18n="role.codev"><b>Rol:</b> Desarrollador Flutter · freelance, en dupla con otro desarrollador</p>
+                <div class="stores" role="group" aria-label="Descargar las apps" data-i18n-attr="aria-label:store.group">
+                  <div class="store-row">
+                    <span class="store-app" data-i18n="store.passengers">Pasajeros</span>
+                    <a class="link-arrow store-btn" href="https://play.google.com/store/apps/details?id=nuevo.turemispasajero.app" target="_blank" rel="noopener" aria-label="Tu Remis SP para pasajeros en Google Play" data-i18n-attr="aria-label:p2.store.pax.android">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-googleplay" /></svg><span>Google Play</span>
+                    </a>
+                    <a class="link-arrow store-btn" href="https://apps.apple.com/ar/app/tu-remis-sp/id6499497246" target="_blank" rel="noopener" aria-label="Tu Remis SP para pasajeros en App Store" data-i18n-attr="aria-label:p2.store.pax.ios">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-apple" /></svg><span>App Store</span>
+                    </a>
+                  </div>
+                  <div class="store-row">
+                    <span class="store-app" data-i18n="store.drivers">Conductores</span>
+                    <a class="link-arrow store-btn" href="https://play.google.com/store/apps/details?id=nuevo.turemisconductor.app" target="_blank" rel="noopener" aria-label="Tu Remis SP Conductor en Google Play" data-i18n-attr="aria-label:p2.store.drv.android">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-googleplay" /></svg><span>Google Play</span>
+                    </a>
+                    <a class="link-arrow store-btn" href="https://apps.apple.com/ar/app/tu-remis-sp-conductor/id6499497640" target="_blank" rel="noopener" aria-label="Tu Remis SP Conductor en App Store" data-i18n-attr="aria-label:p2.store.drv.ios">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-apple" /></svg><span>App Store</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figure class="project-visual">
+              <div class="phone" data-slideshow role="img" aria-label="Capturas de Tu Remis SP: selección de destino en el mapa, ubicaciones guardadas y aviso de llegada del conductor con código de verificación" data-i18n-attr="aria-label:p2.aria">
+                <div class="phone-screen">
+                  <div class="phone-slide is-active" style="--top:#319b56"><img src="assets/trsp/screen-1.webp" alt="" width="480" height="959" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide" style="--top:#2f9c57"><img src="assets/trsp/screen-2.webp" alt="" width="480" height="956" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide" style="--top:#e7e9eb"><img src="assets/trsp/screen-3.webp" alt="" width="480" height="961" loading="lazy" decoding="async" /></div>
+                </div>
+                <img class="phone-frame" src="assets/phone-frame.webp" alt="" width="541" height="1147" />
+              </div>
+              <figcaption class="visual-label" data-i18n="visual.shots">Capturas de la app · código privado</figcaption>
+            </figure>
+          </article>
+
+          <!-- ===== 03 · Remisses Sáenz Peña ===== -->
+          <article class="project reveal" style="--h:352">
+            <div class="project-body">
+              <p class="project-kicker" data-i18n="p3.kicker"><b>03 / 05</b> · Apps móviles + API REST</p>
+              <div class="project-title">
+                <span class="project-icon project-icon--logo"><img src="assets/rsp/logo.webp" alt="" width="56" height="56" /></span>
+                <h3>Remisses Sáenz Peña <span class="project-sub" data-i18n="p3.sub">Clientes y conductores</span></h3>
+              </div>
+              <div class="status-row">
+                <span class="status status--soon" data-i18n="p3.status">En lanzamiento</span>
+                <span class="status status--muted" data-i18n="status.private">Código privado</span>
+              </div>
+              <p class="project-desc" data-i18n="p3.desc">Con un enfoque similar al de Tu Remis SP, comprende dos aplicaciones Flutter para una remisería local, una para clientes y otra para conductores, conectadas a una API REST en PHP y MySQL alojada en Hostinger.</p>
+              <ul class="checks">
+                <li data-i18n="p3.c2">Botón SOS y contactos de emergencia para pasajeros y conductores</li>
+                <li data-i18n="p3.c3">Notificaciones push con Firebase Cloud Messaging y comprobantes de viaje en PDF</li>
+                <li data-i18n="p3.c4">Mapa con ubicación en vivo, rutas y lugares guardados con Google Maps</li>
+              </ul>
+              <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+                <li>Flutter</li><li>PHP</li><li>MySQL</li><li>Firestore</li><li>API REST</li><li>FCM</li><li>Google Maps</li>
+              </ul>
+              <div class="project-foot">
+                <p class="role" data-i18n="role.codev"><b>Rol:</b> Desarrollador Flutter · freelance, en dupla con otro desarrollador</p>
+                <div class="stores" role="group" aria-label="Descargar las apps" data-i18n-attr="aria-label:store.group">
+                  <div class="store-row">
+                    <span class="store-app" data-i18n="store.customers">Clientes</span>
+                    <a class="link-arrow store-btn" href="https://play.google.com/store/apps/details?id=com.remissessp.myapp" target="_blank" rel="noopener" aria-label="Remisses Sáenz Peña para clientes en Google Play" data-i18n-attr="aria-label:p3.store.pax.android">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-googleplay" /></svg><span>Google Play</span>
+                    </a>
+                  </div>
+                  <div class="store-row">
+                    <span class="store-app" data-i18n="store.drivers">Conductores</span>
+                    <a class="link-arrow store-btn" href="https://play.google.com/store/apps/details?id=com.remissessp2.myapp" target="_blank" rel="noopener" aria-label="Remisses Sáenz Peña Conductor en Google Play" data-i18n-attr="aria-label:p3.store.drv.android">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-googleplay" /></svg><span>Google Play</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <figure class="project-visual">
+              <div class="phone" data-slideshow role="img" aria-label="Capturas de Remisses Sáenz Peña: el pasajero busca conductores cercanos, el conductor recibe el pedido, el pasajero sigue al conductor en camino y el conductor en línea en el mapa" data-i18n-attr="aria-label:p3.aria">
+                <div class="phone-screen">
+                  <div class="phone-slide is-active" style="--top:#e8e8ec"><img src="assets/rsp/screen-1.webp" alt="" width="480" height="974" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide" style="--top:#e2ede6"><img src="assets/rsp/screen-2.webp" alt="" width="480" height="974" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide" style="--top:#f0eff0"><img src="assets/rsp/screen-3.webp" alt="" width="480" height="974" loading="lazy" decoding="async" /></div>
+                  <div class="phone-slide" style="--top:#ebeae8"><img src="assets/rsp/screen-4.webp" alt="" width="480" height="974" loading="lazy" decoding="async" /></div>
+                </div>
+                <img class="phone-frame" src="assets/phone-frame.webp" alt="" width="541" height="1147" />
+              </div>
+              <figcaption class="visual-label" data-i18n="visual.shots">Capturas de la app · código privado</figcaption>
+            </figure>
+          </article>
+
+          <!-- ===== 04 · STIMCh ===== -->
+          <article class="project reveal" style="--h:28">
+            <div class="project-body">
+              <p class="project-kicker" data-i18n="p4.kicker"><b>04 / 05</b> · App de escritorio · Windows</p>
+              <div class="project-title">
+                <span class="project-icon project-icon--logo"><img src="assets/stimch/logo.webp" alt="" width="56" height="56" /></span>
+                <h3>STIMCh <span class="project-sub" data-i18n="p4.sub">Gestión de afiliados · OSPIM</span></h3>
+              </div>
+              <div class="status-row">
+                <span class="status status--live" data-i18n="p4.status">En producción</span>
+                <span class="status status--muted" data-i18n="status.private">Código privado</span>
+              </div>
+              <p class="project-desc" data-i18n="p4.desc">Sistema de escritorio para la administración de afiliados, empresas empleadoras y grupos familiares, actualmente en uso diario. Lo empecé como un prototipo en C# con WinForms que no llegó a usarse: el sistema completo se desarrolló y se puso en producción en Flutter para Windows.</p>
+              <ul class="checks">
+                <li data-i18n="p4.c1">Base local SQLite sincronizada con Cloud Firestore desde escritorio</li>
+                <li data-i18n="p4.c2">Carga, listados con filtros y fichas de afiliados, empresas y familiares</li>
+                <li data-i18n="p4.c3">Atajos de teclado orientados a la carga ágil de datos y exportación de listados a PDF</li>
+              </ul>
+              <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+                <li>Flutter Windows</li><li>Dart</li><li>SQLite</li><li>Firestore</li><li>PDF</li>
+              </ul>
+              <div class="project-foot">
+                <p class="role" data-i18n="p4.role"><b>Rol:</b> Desarrollador Flutter · freelance</p>
+              </div>
+            </div>
+            <figure class="project-visual project-visual--laptop">
+              <!-- Laptop de frente recortada (sin fondo, pantalla apagada) y, encima,
+                   las capturas en la pantalla (todas miden lo mismo). Se turnan con
+                   main.js (data-slideshow). -->
+              <div class="laptop laptop--front" data-slideshow role="img" aria-label="Capturas de STIMCh en una laptop: carga de datos de una empresa y lista de atajos de teclado" data-i18n-attr="aria-label:p4.aria">
+                <img class="laptop-photo" src="assets/stimch/laptop.webp" alt="" width="1209" height="855" loading="lazy" decoding="async" />
+                <div class="laptop-slide is-active"><img src="assets/stimch/screen-1.webp" alt="" width="1209" height="855" loading="lazy" decoding="async" /></div>
+                <div class="laptop-slide"><img src="assets/stimch/screen-2.webp" alt="" width="1209" height="855" loading="lazy" decoding="async" /></div>
+              </div>
+              <figcaption class="visual-label" data-i18n="visual.shots">Capturas de la app · código privado</figcaption>
+            </figure>
+          </article>
+
+          <!-- ===== 05 · Print-Table ===== -->
+          <article class="project reveal" style="--h:268">
+            <div class="project-body">
+              <p class="project-kicker" data-i18n="p5.kicker"><b>05 / 05</b> · Producto propio · Android &amp; Windows</p>
+              <div class="project-title">
+                <span class="project-icon project-icon--logo"><img src="assets/printable/logo.svg" alt="" width="56" height="56" /></span>
+                <h3>Print-Table <span class="project-sub" data-i18n="p5.sub">Gestión para servicio técnico</span></h3>
+              </div>
+              <div class="status-row">
+                <span class="status status--live" data-i18n="p5.status">En uso en dos comercios</span>
+                <span class="status status--muted" data-i18n="status.private">Código privado</span>
+              </div>
+              <p class="project-desc" data-i18n="p5.desc">Sistema para un servicio técnico de impresoras: cada trabajo se identifica con un código QR, se registra en la caja diaria y se sigue hasta su entrega. Actualmente lo utilizan dos comercios.</p>
+              <ul class="checks">
+                <li data-i18n="p5.c2">Trabajos y pedidos con QR, caja diaria, balance y comisiones con gráficos</li>
+                <li data-i18n="p5.c3">Tickets en impresora térmica Bluetooth (ESC/POS) y comprobantes en PDF para compartir</li>
+                <li data-i18n="p5.c4">Reglas de Firestore con validación de esquema y tests aislados con SQLite en memoria</li>
+              </ul>
+              <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+                <li>Flutter</li><li>Dart</li><li>SQLite</li><li>Firestore</li><li>ESC/POS</li><li>QR</li><li>fl_chart</li>
+              </ul>
+              <div class="project-foot">
+                <p class="role" data-i18n="p5.role"><b>Rol:</b> Proyecto propio · diseño y desarrollo</p>
+              </div>
+            </div>
+            <figure class="project-visual project-visual--laptop">
+              <!-- La misma laptop que STIMCh con las capturas de escritorio y, adelante,
+                   el celular fotográfico (como el de SGM: pantalla apagada, capturas
+                   deformadas y el marco encima). Cada uno turna sus capturas. -->
+              <div class="devices" role="img" aria-label="Capturas de Print-Table: en la laptop, la lista de trabajos pendientes, el balance del mes y la carga de un nuevo trabajo; en el celular, un pedido nuevo, los movimientos del turno y la caja del día" data-i18n-attr="aria-label:p5.aria">
+                <div class="laptop" data-slideshow>
+                  <img class="laptop-photo" src="assets/laptop-photo.webp" alt="" width="1127" height="996" loading="lazy" decoding="async" />
+                  <div class="laptop-slide is-active"><img src="assets/printable/screen-1.webp" srcset="assets/printable/screen-1.webp 1x, assets/printable/screen-1@2x.webp 2x" alt="" width="1127" height="996" loading="lazy" decoding="async" /></div>
+                  <div class="laptop-slide"><img src="assets/printable/screen-2.webp" srcset="assets/printable/screen-2.webp 1x, assets/printable/screen-2@2x.webp 2x" alt="" width="1127" height="996" loading="lazy" decoding="async" /></div>
+                  <div class="laptop-slide"><img src="assets/printable/screen-3.webp" srcset="assets/printable/screen-3.webp 1x, assets/printable/screen-3@2x.webp 2x" alt="" width="1127" height="996" loading="lazy" decoding="async" /></div>
+                </div>
+                <div class="phone phone--photo phone--photo-pt" data-slideshow>
+                  <div class="phone-screen">
+                    <div class="phone-slide is-active"><img src="assets/printable/phone-photo-1.webp" alt="" width="587" height="976" loading="lazy" decoding="async" /></div>
+                    <div class="phone-slide"><img src="assets/printable/phone-photo-2.webp" alt="" width="587" height="976" loading="lazy" decoding="async" /></div>
+                    <div class="phone-slide"><img src="assets/printable/phone-photo-3.webp" alt="" width="587" height="976" loading="lazy" decoding="async" /></div>
+                  </div>
+                  <img class="phone-frame" src="assets/printable/phone-photo-frame.webp" alt="" width="587" height="976" />
+                </div>
+              </div>
+              <figcaption class="visual-label" data-i18n="visual.shots">Capturas de la app · código privado</figcaption>
+            </figure>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ Proceso ============ -->
+    <section class="section" id="proceso" aria-labelledby="proceso-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="process.eyebrow">Cómo trabajo</p>
+            <h2 class="section-title" id="proceso-title" data-i18n="process.title">Del relevamiento <span class="hl">a producción.</span></h2>
+          </div>
+          <p class="section-lead" data-i18n="process.lead">Las aplicaciones que desarrollo se utilizan en la vía pública, en mostradores y en oficinas, muchas veces con conectividad limitada. Por eso priorizo el diseño de los datos y el comportamiento del sistema ante fallas.</p>
+        </div>
+        <ol class="process" role="list">
+          <li class="step reveal">
+            <span class="step-num">01</span>
+            <h3 data-i18n="s1.title">Relevamiento</h3>
+            <p data-i18n="s1.text">Me reúno con los usuarios finales (inspectores, conductores, personal de atención al público) para comprender el flujo de trabajo real antes de comenzar el desarrollo.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-num">02</span>
+            <h3 data-i18n="s2.title">Datos y contratos</h3>
+            <p data-i18n="s2.text">Defino el modelo de datos, los contratos con el backend y la estrategia offline: base local, cola de envíos y reglas de sincronización.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-num">03</span>
+            <h3 data-i18n="s3.title">Desarrollo con tests</h3>
+            <p data-i18n="s3.text">Gestión de estado con BLoC/Cubit y tests de unidad, widgets y contratos. En SGM, la app municipal, son más de 540.</p>
+          </li>
+          <li class="step reveal">
+            <span class="step-num">04</span>
+            <h3 data-i18n="s4.title">Entrega y traspaso</h3>
+            <p data-i18n="s4.text">Builds por entorno, actualizaciones dentro de la aplicación y documentación de traspaso, para que el equipo que sigue pueda mantener el sistema sin depender de mí.</p>
+          </li>
+        </ol>
+        <div class="note reveal">
+          <span class="note-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-spark" /></svg></span>
+          <div>
+            <h3 data-i18n="note.title">Desarrollo asistido por IA, con criterio</h3>
+            <p data-i18n="note.text">Utilizo Claude Code para auditar código, escribir tests y documentar. Antes de cada entrega, todos los cambios pasan por mi revisión, conforme a buenas prácticas y estándares de programación, y por la suite de tests.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Experiencia ============ -->
+    <section class="section" id="experiencia" aria-labelledby="experiencia-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="exp.eyebrow">Experiencia</p>
+            <h2 class="section-title" id="experiencia-title" data-i18n="exp.title">Trayectoria <span class="hl">y formación.</span></h2>
+          </div>
+          <p class="section-lead" data-i18n="exp.lead">Me desempeño como desarrollador freelance, de forma independiente o en equipo, mientras finalizo la Tecnicatura Superior en Desarrollo de Software.</p>
+        </div>
+
+        <div class="exp-grid">
+          <div class="timeline">
+            <article class="job reveal">
+              <p class="job-date"><b>2026</b>Freelance</p>
+              <div>
+                <h3>Mobile Developer</h3>
+                <p class="job-org" data-i18n="j1.org">SGM · Municipalidad en Chaco</p>
+                <p data-i18n="j1.text">Responsable integral de la aplicación móvil de gestión municipal, dentro de un ecosistema de apps ciudadanas y paneles web desarrollados por otros programadores, sobre un backend .NET.</p>
+                <ul class="checks">
+                  <li data-i18n="j1.c1">Diseñé e implementé las actas de seis rubros, desde el borrador offline hasta la impresión del ticket</li>
+                  <li data-i18n="j1.c2">Integré cámara, GPS, Bluetooth, notificaciones push, un mapa de colectivos y la consulta del padrón vehicular</li>
+                  <li data-i18n="j1.c3">Implementé la distribución del APK con actualización dentro de la aplicación y entornos aislados por flavor</li>
+                  <li data-i18n="j1.c4">Aseguré la calidad mediante más de 540 tests y documentación técnica para el equipo</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="job reveal">
+              <p class="job-date" data-i18n="j3.date"><b>2026</b>Freelance</p>
+              <div>
+                <h3 data-i18n="j3.title">Desarrollador de software de escritorio</h3>
+                <p class="job-org" data-i18n="j3.org">STIMCh · Gestión de afiliados</p>
+                <p data-i18n="j3.text">Sistema en producción, desarrollado en Flutter para Windows con base de datos local SQLite y sincronización con Firestore. Lo empecé en C# con WinForms, pero pasé a Flutter antes de que esa versión llegara a usarse.</p>
+              </div>
+            </article>
+
+            <article class="job reveal">
+              <p class="job-date"><b>2025 — 2026</b>Freelance</p>
+              <div>
+                <h3 data-i18n="j2.title">Desarrollador Flutter</h3>
+                <p class="job-org">Tu Remis SP y Remisses Sáenz Peña</p>
+                <p data-i18n="j2.text">Desarrollo, en dupla con otro desarrollador, de dos ecosistemas de aplicaciones de remises, cada uno con una app para pasajeros y otra para conductores, desde el mapa y los viajes en tiempo real hasta las notificaciones y la publicación en tiendas.</p>
+                <ul class="checks">
+                  <li data-i18n="j2.c1">Tu Remis SP: Firebase (Auth, Firestore, Cloud Functions, Hosting) y Google Maps. Publicada.</li>
+                  <li data-i18n="j2.c2">Remisses Sáenz Peña: API REST en PHP y MySQL, tiempo real con Firestore, notificaciones push y botón SOS. En lanzamiento.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="job reveal">
+              <p class="job-date" data-i18n="j4.date"><b>2024</b>Prácticas</p>
+              <div>
+                <h3 data-i18n="j4.title">Programador</h3>
+                <p class="job-org" data-i18n="j4.org">Wipper Insumos · Prácticas Profesionalizantes II</p>
+                <p data-i18n="j4.text">
+                  Sistema de gestión de escritorio en Python y Tkinter para un comercio real, en un equipo de dos diseñadores y dos programadores.
+                </p>
+              </div>
+            </article>
+
+            <article class="job reveal">
+              <p class="job-date" data-i18n="j5.date"><b>2023</b>Formación</p>
+              <div>
+                <h3 data-i18n="j5.title">Inicio de la Tecnicatura</h3>
+                <p class="job-org" data-i18n="j5.org">IES Juan Mantovani · Tecnicatura Superior en Desarrollo de Software</p>
+                <p data-i18n="j5.text">Inicio de la carrera, donde adquirí los fundamentos de programación, lógica y bases de datos que sustentan mi trabajo actual.</p>
+              </div>
+            </article>
+          </div>
+
+          <aside class="side">
+            <div class="panel edu reveal">
+              <p class="panel-title" data-i18n="edu.label">Formación</p>
+              <h3 data-i18n="edu.title">Tecnicatura Superior en Desarrollo de Software</h3>
+              <p>IES Juan Mantovani</p>
+              <span class="status status--dev edu-status" data-i18n="edu.status">Cursada completa · exámenes finales en curso</span>
+            </div>
+            <div class="panel reveal">
+              <p class="panel-title" data-i18n="courses.label">Cursos</p>
+              <ul class="course-list">
+                <li data-i18n="course1">Gestión ágil de proyectos: Agile, Scrum y Kanban <span>Curso</span></li>
+                <li data-i18n="course2">Introducción a la ciberseguridad <span>Udemy</span></li>
+                <li data-i18n="course3">Python para análisis de datos y Excel <span>Curso</span></li>
+                <li data-i18n="course4">Programación orientada a objetos en Java <span>Bootcamp</span></li>
+              </ul>
+            </div>
+            <div class="panel reveal">
+              <p class="panel-title" data-i18n="langs.label">Idiomas</p>
+              <div class="lang">
+                <div class="lang-row">
+                  <div data-i18n="langs.es">Español <span>Nativo</span></div>
+                  <span class="bar"><i style="--w:100%"></i></span>
+                </div>
+                <div class="lang-row">
+                  <div data-i18n="langs.en">Inglés <span>Avanzado · C1</span></div>
+                  <span class="bar"><i style="--w:85%"></i></span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Stack ============ -->
+    <section class="section" id="stack" aria-labelledby="stack-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="stack.eyebrow">Stack</p>
+            <h2 class="section-title" id="stack-title" data-i18n="stack.title">Lenguajes y <span class="hl">herramientas.</span></h2>
+          </div>
+          <p class="section-lead" data-i18n="stack.lead">Flutter es mi herramienta principal, aunque trabajo en desarrollo móvil, de escritorio y backend según los requerimientos de cada proyecto.</p>
+        </div>
+
+        <div class="languages reveal">
+          <span class="languages-label" data-i18n="stack.langs">Lenguajes</span>
+          <span class="lang-chip is-main" data-i18n="stack.main">Dart <small>Principal</small></span>
+          <span class="lang-chip">C#</span>
+          <span class="lang-chip">Python</span>
+          <span class="lang-chip">SQL</span>
+          <span class="lang-chip">PHP</span>
+        </div>
+
+        <div class="stack-grid">
+          <article class="stack-card reveal">
+            <header><h3>Mobile</h3></header>
+            <ul>
+              <li><svg class="chip-ico" style="--c:#47c5fb;--cl:#027dfd" aria-hidden="true"><use href="#t-flutter" /></svg>Flutter</li>
+              <li><svg class="chip-ico" style="--c:#00b4ab" aria-hidden="true"><use href="#t-dart" /></svg>Dart</li>
+              <li><svg class="chip-ico" style="--c:#4285f4" aria-hidden="true"><use href="#t-googlemaps" /></svg>Google Maps</li>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-camera" /></svg><span data-i18n="st1.camera">Cámara y sensores</span></li>
+            </ul>
+          </article>
+          <article class="stack-card reveal">
+            <header><h3 data-i18n="st2.title">Escritorio</h3></header>
+            <ul>
+              <li><svg class="chip-ico" style="--c:#47c5fb;--cl:#027dfd" aria-hidden="true"><use href="#t-flutter" /></svg>Flutter Windows</li>
+              <li><svg class="chip-ico" style="--c:#a179dc" aria-hidden="true"><use href="#t-csharp" /></svg>C# · WinForms</li>
+              <li><svg class="chip-ico" style="--c:#6d4cf0" aria-hidden="true"><use href="#t-dotnet" /></svg>.NET Framework</li>
+              <li><svg class="chip-ico" style="--c:#ffd43b;--cl:#3776ab" aria-hidden="true"><use href="#t-python" /></svg>Python · Tkinter</li>
+            </ul>
+          </article>
+          <article class="stack-card reveal">
+            <header><h3 data-i18n="st3.title">Backend y nube</h3></header>
+            <ul>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Firebase Auth</li>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Cloud Firestore</li>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Cloud Functions</li>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Firebase Hosting</li>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Remote Config</li>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>FCM</li>
+              <li><svg class="chip-ico chip-ico--wide" style="--c:#8892bf" aria-hidden="true"><use href="#t-php" /></svg>PHP - API REST</li>
+              <li><svg class="chip-ico chip-ico--wide" style="--c:#8892bf" aria-hidden="true"><use href="#t-php" /></svg><span data-i18n="st3.panel">PHP - Panel web</span></li>
+              <li><svg class="chip-ico" style="--c:#8b6cf0;--cl:#673de6" aria-hidden="true"><use href="#t-hostinger" /></svg>Hostinger</li>
+              <li><svg class="chip-ico" style="--c:#6d4cf0" aria-hidden="true"><use href="#t-dotnet" /></svg>APIs .NET</li>
+            </ul>
+          </article>
+          <article class="stack-card reveal">
+            <header><h3 data-i18n="st4.title">Datos</h3></header>
+            <ul>
+              <li><svg class="chip-ico" style="--c:#4aa3df" aria-hidden="true"><use href="#t-sqlite" /></svg>SQLite</li>
+              <li><svg class="chip-ico" style="--c:#00a2c4" aria-hidden="true"><use href="#t-mysql" /></svg>MySQL</li>
+              <li><svg class="chip-ico" style="--c:#ffca28;--cl:#f57c00" aria-hidden="true"><use href="#t-firebase" /></svg>Firestore</li>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-cloud-off" /></svg>Offline-first</li>
+            </ul>
+          </article>
+          <article class="stack-card reveal">
+            <header><h3 data-i18n="st5.title">Integraciones</h3></header>
+            <ul>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-printer" /></svg><span data-i18n="st5.printers">Impresoras térmicas ESC/POS</span></li>
+              <li><svg class="chip-ico" style="--c:#0082fc" aria-hidden="true"><use href="#t-bluetooth" /></svg>Bluetooth</li>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-qr" /></svg><span data-i18n="st5.codes">QR y códigos de barras</span></li>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-file" /></svg>PDF</li>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-pin" /></svg>GPS</li>
+              <li><svg class="chip-ico" aria-hidden="true"><use href="#i-link" /></svg>Deep links</li>
+            </ul>
+          </article>
+          <article class="stack-card reveal">
+            <header><h3 data-i18n="st6.title">Calidad y herramientas</h3></header>
+            <ul>
+              <li><svg class="chip-ico" style="--c:#47c5fb;--cl:#027dfd" aria-hidden="true"><use href="#t-flutter" /></svg>flutter_test</li>
+              <li><svg class="chip-ico" style="--c:#f05032" aria-hidden="true"><use href="#t-git" /></svg><span data-i18n="st6.git">Git y GitHub</span></li>
+              <li><svg class="chip-ico" style="--c:#d97757" aria-hidden="true"><use href="#t-claude" /></svg>Claude Code</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Contacto ============ -->
+    <section class="section contact" id="contacto" aria-labelledby="contacto-title">
+      <div class="container">
+        <div class="contact-box reveal">
+          <div class="contact-grid">
+            <div>
+              <p class="eyebrow" data-i18n="contact.eyebrow">Contacto</p>
+              <h2 class="contact-title" id="contacto-title" data-i18n="contact.title">Trabajemos <span class="hl">juntos.</span></h2>
+              <p class="contact-lead" data-i18n="contact.lead">Puedo encargarme de una parte de un proyecto, sumarme a un equipo durante un proyecto o incorporarme a una empresa de forma estable, como desarrollador móvil o de escritorio, en Argentina o de forma remota.</p>
+            </div>
+            <div class="contact-list">
+              <div class="contact-item">
+                <span class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-mail" /></svg></span>
+                <span class="contact-item-text">
+                  <small>Email</small>
+                  <a href="mailto:luca11maxi@gmail.com">luca11maxi@gmail.com</a>
+                </span>
+                <button class="copy-btn" type="button" data-copy="luca11maxi@gmail.com" aria-label="Copiar email" data-i18n-attr="aria-label:contact.copyAria">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-copy" /></svg>
+                  <span class="copy-label" data-i18n="contact.copy">Copiar</span>
+                </button>
+              </div>
+              <div class="contact-item">
+                <span class="contact-item-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-whatsapp" /></svg></span>
+                <span class="contact-item-text">
+                  <small>WhatsApp</small>
+                  <a href="https://wa.me/5493644223841?text=Hola%20Luca%2C%20vi%20tu%20portfolio." target="_blank" rel="noopener" data-i18n-attr="href:contact.waHref">+54 9 3644 22-3841</a>
+                </span>
+                <button class="copy-btn" type="button" data-copy="+5493644223841" aria-label="Copiar número de teléfono" data-i18n-attr="aria-label:contact.copyPhoneAria">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-copy" /></svg>
+                  <span class="copy-label" data-i18n="contact.copy">Copiar</span>
+                </button>
+              </div>
+              <a class="contact-item" href="https://www.linkedin.com/in/lucaelizondo/" target="_blank" rel="noopener">
+                <span class="contact-item-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-linkedin" /></svg></span>
+                <span class="contact-item-text">
+                  <small>LinkedIn</small>
+                  <strong>in/lucaelizondo</strong>
+                </span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow" /></svg>
+              </a>
+              <a class="contact-item" href="https://github.com/Luca0407" target="_blank" rel="noopener">
+                <span class="contact-item-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-github" /></svg></span>
+                <span class="contact-item-text">
+                  <small>GitHub</small>
+                  <strong>@Luca0407</strong>
+                </span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow" /></svg>
+              </a>
+              <a class="contact-item" href="assets/cv/Luca_Elizondo_CV_ES.pdf" target="_blank" rel="noopener" data-i18n-attr="href:cv.href">
+                <span class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-file" /></svg></span>
+                <span class="contact-item-text">
+                  <small>CV</small>
+                  <strong data-i18n="contact.cv">Currículum en PDF</strong>
+                </span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow" /></svg>
+              </a>
+              <div class="contact-item">
+                <span class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pin" /></svg></span>
+                <span class="contact-item-text">
+                  <small data-i18n="contact.location">Ubicación</small>
+                  <strong>Chaco · Argentina</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year">2026</span> Luca Elizondo</span>
+      <a href="#inicio" data-i18n="footer.top">Volver arriba ↑</a>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>
