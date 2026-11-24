@@ -22,24 +22,20 @@ python -m http.server 5500 --directory portfolio
 
 Abrir http://localhost:5500. Abrir `index.html` con doble clic también funciona.
 
-## Publicar en GitHub Pages
+## Publicar cambios
 
-1. Crear un repo (por ejemplo `Luca0407.github.io` para que quede en `https://luca0407.github.io`).
-2. Subir esta carpeta **con git**, para que se respete el `.gitignore`:
+El sitio está en <https://luca0407.github.io> (repo `Luca0407/Luca0407.github.io`, GitHub Pages desde
+`main`). Para publicar un cambio, desde esta carpeta:
 
-   ```bash
-   git init
-   git add .
-   git status        # revisar: no tienen que aparecer .claude/ ni _fuentes/
-   git commit -m "Primera versión del portfolio"
-   git branch -M main
-   git remote add origin https://github.com/Luca0407/Luca0407.github.io.git
-   git push -u origin main
-   ```
+```bash
+git add .
+git status        # revisar: no tienen que aparecer .claude/ ni _fuentes/
+git commit -m "Qué cambió"
+git push
+```
 
-   No arrastres la carpeta a la web de GitHub: así el `.gitignore` no se aplica y se publicarían
-   `.claude/` (informes del consejo) y `_fuentes/` (capturas originales).
-3. En el repo: **Settings → Pages → Deploy from a branch → `main` / `root`**.
+GitHub tarda uno o dos minutos en actualizarlo. No subas archivos arrastrándolos a la web de GitHub: así el
+`.gitignore` no se aplica y se publicarían `.claude/` (informes del consejo) y `_fuentes/` (originales).
 
 ## Idiomas (ES / EN)
 
@@ -49,7 +45,7 @@ Abrir http://localhost:5500. Abrir `index.html` con doble clic también funciona
   traducción, se muestra en español.
 - Idioma inicial: `?lang=en` o `?lang=es` en la URL → la última elección del visitante → el idioma del
   navegador (español si empieza con `es`, si no, inglés).
-- Link directo en inglés para compartir: `https://tu-dominio/?lang=en`.
+- Link directo en inglés para compartir: <https://luca0407.github.io/?lang=en>.
 - Las capturas de las apps quedan en español a propósito, porque así son las apps reales.
 
 ## Cambios frecuentes
