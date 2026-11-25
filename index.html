@@ -96,6 +96,7 @@
     <symbol id="i-qr" viewBox="0 0 24 24"><rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3M21 21v.01M12 7v3a2 2 0 0 1-2 2H7M3 12h.01M12 3h.01M12 16v.01M16 12h1M21 12v.01M12 21v-1" /></symbol>
     <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8M16 13H8M16 17H8" /></symbol>
     <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></symbol>
   </svg>
 
   <div class="bg-decor bg-decor--top" aria-hidden="true"></div>
@@ -458,13 +459,14 @@
                 <span class="status status--muted" data-i18n="status.private">Código privado</span>
               </div>
               <p class="project-desc" data-i18n="p5.desc">Sistema para un servicio técnico de impresoras: cada trabajo se identifica con un código QR, se registra en la caja diaria y se sigue hasta su entrega. Actualmente lo utilizan dos comercios.</p>
+              <p class="decision" data-i18n="p5.decision"><b>Sincronización:</b> usa <a href="#outbox-sync">outbox_sync</a>, mi paquete open source. Los cambios hechos sin conexión esperan en una cola y, si otro dispositivo modificó el mismo trabajo, vuelven como conflicto en lugar de pisarlo.</p>
               <ul class="checks">
                 <li data-i18n="p5.c2">Trabajos y pedidos con QR, caja diaria, balance y comisiones con gráficos</li>
                 <li data-i18n="p5.c3">Tickets en impresora térmica Bluetooth (ESC/POS) y comprobantes en PDF para compartir</li>
                 <li data-i18n="p5.c4">Reglas de Firestore con validación de esquema y tests aislados con SQLite en memoria</li>
               </ul>
               <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
-                <li>Flutter</li><li>Dart</li><li>SQLite</li><li>Firestore</li><li>ESC/POS</li><li>QR</li><li>fl_chart</li>
+                <li>Flutter</li><li>Dart</li><li>SQLite</li><li>Firestore</li><li>outbox_sync</li><li>ESC/POS</li><li>QR</li><li>fl_chart</li>
               </ul>
               <div class="project-foot">
                 <p class="role" data-i18n="p5.role"><b>Rol:</b> Proyecto propio · diseño y desarrollo</p>
@@ -494,6 +496,68 @@
             </figure>
           </article>
         </div>
+
+        <!-- ===== Código abierto · outbox_sync ===== -->
+        <div class="oss-head reveal">
+          <p class="eyebrow" data-i18n="oss.eyebrow">Código abierto</p>
+          <p class="section-lead" data-i18n="oss.lead">El código de los clientes es privado. Este paquete es público: es la sincronización que usa <span class="nobr">Print-Table</span>, para que puedas leer el código y correr los tests.</p>
+        </div>
+
+        <article class="project reveal" id="outbox-sync" style="--h:170">
+          <div class="project-body">
+            <p class="project-kicker" data-i18n="oss.kicker"><b>Paquete Dart</b> · Dart &amp; Flutter · Sin dependencias</p>
+            <div class="project-title">
+              <span class="project-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-sync" /></svg></span>
+              <h3>outbox_sync <span class="project-sub" data-i18n="oss.sub">Sincronización offline-first</span></h3>
+            </div>
+            <div class="status-row">
+              <span class="status status--live" data-i18n="oss.status">Publicado · v0.1.0</span>
+              <span class="status status--muted" data-i18n="oss.license">Código abierto · MIT</span>
+            </div>
+            <p class="project-desc" data-i18n="oss.desc">Paquete para apps que trabajan sin señal: guarda cada cambio local hasta que el servidor lo confirma, envía los cambios en orden y reintenta sin duplicarlos. Lo usa <span class="nobr">Print-Table</span>.</p>
+            <p class="decision" data-i18n="oss.decision"><b>Sin pisar datos:</b> el servidor lleva la versión de cada registro y aplica un cambio solo si el registro sigue en la versión sobre la que se hizo. Si otro dispositivo lo modificó antes, el cambio vuelve como conflicto; nunca se comparan los relojes de los dispositivos.</p>
+            <ul class="checks">
+              <li data-i18n="oss.c1">Cola persistente y ordenada: se guarda después de cada paso con una escritura atómica, así un corte no la deja a medias</li>
+              <li data-i18n="oss.c2">Reintentos idempotentes con un id por operación y espera exponencial con jitter entre intentos</li>
+              <li data-i18n="oss.c3">13 tests, uno de ellos reproduce la pérdida de datos al decidir por fecha de modificación; CI con formato, análisis y tests</li>
+            </ul>
+            <ul class="tags" aria-label="Tecnologías" data-i18n-attr="aria-label:a11y.tech">
+              <li>Dart</li><li>Flutter</li><li>Offline-first</li><li>Outbox</li><li>Tests</li><li>GitHub Actions</li>
+            </ul>
+            <div class="project-foot">
+              <p class="role" data-i18n="oss.role"><b>Rol:</b> Autor · diseño, código y tests</p>
+              <a class="link-arrow" href="https://github.com/Luca0407/outbox_sync" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-github" /></svg><span data-i18n="oss.cta">Ver en GitHub</span>
+              </a>
+            </div>
+          </div>
+          <figure class="project-visual">
+            <!-- Sin capturas: el visual es el uso real del paquete (la API coincide con
+                 lib/src/sync_engine.dart) y la salida de "dart test". -->
+            <div class="code-window">
+              <div class="code-bar" aria-hidden="true"><i></i><i></i><i></i><span>main.dart</span></div>
+<pre class="code-body"><code><span class="tok-k">final</span> sync = <span class="tok-t">SyncEngine</span>(
+  remote: api,
+  store: <span class="tok-t">JsonFileOutboxStore</span>(file),
+);
+<span class="tok-k">await</span> sync.<span class="tok-f">init</span>();
+
+<span class="tok-c" data-i18n="oss.code1">// editado sin señal (versión 4)</span>
+<span class="tok-k">await</span> sync.<span class="tok-f">enqueueWrite</span>(<span class="tok-s">'job-17'</span>,
+    {<span class="tok-s">'status'</span>: <span class="tok-s">'delivered'</span>},
+    baseVersion: <span class="tok-n">4</span>);
+
+<span class="tok-c" data-i18n="oss.code2">// al volver la conexión</span>
+<span class="tok-k">final</span> report = <span class="tok-k">await</span> sync.<span class="tok-f">flush</span>();
+<span class="tok-k">for</span> (<span class="tok-k">final</span> c <span class="tok-k">in</span> report.conflicts) {
+  <span class="tok-c" data-i18n="oss.code3">// mostrar las dos versiones</span>
+}</code></pre>
+<pre class="code-run"><code><span class="tok-c">$</span> dart test
+00:00 +13: <span class="code-ok">All tests passed!</span></code></pre>
+            </div>
+            <figcaption class="visual-label" data-i18n="oss.caption">Uso del paquete · código público</figcaption>
+          </figure>
+        </article>
 
       </div>
     </section>

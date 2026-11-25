@@ -18,6 +18,12 @@
   --accent-ink: #03131c;
   --accent-soft: rgba(70, 200, 255, 0.12);
   --hl-end: #a58bff; /* final del degradado de las palabras destacadas */
+  --code-bg: #0e1014; /* ventana de código de outbox_sync y sus colores de sintaxis */
+  --tok-k: #b59dff;
+  --tok-t: #46c8ff;
+  --tok-f: #7ee0c3;
+  --tok-s: #f5c26b;
+  --tok-n: #ff9e7a;
   --ok: #4ade80;
   --warn: #fbbf24;
   --glow-alpha: 0.22;
@@ -54,6 +60,12 @@
   --accent-ink: #ffffff;
   --accent-soft: rgba(10, 114, 194, 0.1);
   --hl-end: #5b45d4;
+  --code-bg: #f6f5f1;
+  --tok-k: #5b45d4;
+  --tok-t: #0a66ad;
+  --tok-f: #0d7259;
+  --tok-s: #8f5400;
+  --tok-n: #b13f1a;
   --ok: #15803d;
   --warn: #b45309;
   --glow-alpha: 0.16;
@@ -1505,6 +1517,100 @@ html.i18n-pending body {
   font-weight: 600;
 }
 
+.decision a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--h) 80% 60%);
+  text-underline-offset: 3px;
+}
+
+.decision a:hover {
+  color: hsl(var(--h) 85% 62%);
+}
+
+:root[data-theme="light"] .decision a:hover {
+  color: hsl(var(--h) 75% 36%);
+}
+
+/* ---------- Código abierto (outbox_sync) ---------- */
+.oss-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 12px 56px;
+  align-items: start;
+  margin: clamp(56px, 8vw, 88px) 0 28px;
+}
+
+.oss-head .eyebrow {
+  margin: 0.45em 0 0;
+}
+
+/* Nombres con guion (Print-Table) que no se cortan al final de la línea */
+.nobr {
+  white-space: nowrap;
+}
+
+/* En lugar de capturas, una ventana de código con el uso del paquete */
+.code-window {
+  width: min(460px, 100%);
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--code-bg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.code-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.code-bar i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.code-bar span {
+  margin-left: 8px;
+}
+
+.code-body,
+.code-run {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font: inherit;
+  color: var(--text);
+  tab-size: 2;
+}
+
+.code-run {
+  padding-block: 10px 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.tok-k { color: var(--tok-k); }
+.tok-t { color: var(--tok-t); }
+.tok-f { color: var(--tok-f); }
+.tok-s { color: var(--tok-s); }
+.tok-n { color: var(--tok-n); }
+.tok-c { color: var(--faint); font-style: italic; }
+.code-ok { color: var(--ok); }
+
 /* ---------- Proceso ---------- */
 .process {
   display: grid;
@@ -2131,6 +2237,7 @@ a.contact-item:hover,
   }
 
   .section-head,
+  .oss-head,
   .contact-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2152,6 +2259,15 @@ a.contact-item:hover,
 @media (max-width: 640px) {
   .brand-text {
     display: none;
+  }
+
+  .code-window {
+    font-size: 12px;
+  }
+
+  .code-body,
+  .code-run {
+    padding-inline: 14px;
   }
 
   /* La app arriba y sus botones juntos debajo */

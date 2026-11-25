@@ -126,11 +126,31 @@
     "p5.sub": "Repair shop management",
     "p5.status": "In use at two businesses",
     "p5.desc": "A system for a printer repair shop: each job is identified by a QR code, recorded in the daily cash register and tracked until delivery. Two businesses use it today.",
+    "p5.decision": '<b>Sync:</b> it uses <a href="#outbox-sync">outbox_sync</a>, my open-source package. Changes made offline wait in a queue, and if another device changed the same job first, they come back as a conflict instead of overwriting it.',
     "p5.c2": "Jobs and orders with QR codes, daily cash register, balance and commissions with charts",
     "p5.c3": "Tickets on Bluetooth thermal printers (ESC/POS) and shareable PDF receipts",
     "p5.c4": "Firestore rules with schema validation and isolated tests with in-memory SQLite",
     "p5.role": "<b>Role:</b> Own project · design and development",
     "p5.aria": "Print-Table screenshots: on the laptop, the pending jobs list, the month's balance and entering a new job; on the phone, a new order, the shift's transactions and the daily cash register",
+
+    /* ---- Código abierto · outbox_sync ---- */
+    "oss.eyebrow": "Open source",
+    "oss.lead": "Client code is private. This package is public: it's the sync <span class=\"nobr\">Print-Table</span> uses, so you can read the code and run the tests.",
+    "oss.kicker": "<b>Dart package</b> · Dart &amp; Flutter · No dependencies",
+    "oss.sub": "Offline-first sync",
+    "oss.status": "Released · v0.1.0",
+    "oss.license": "Open source · MIT",
+    "oss.desc": "A package for apps that work without signal: it keeps every local change until the server confirms it, sends changes in order and retries without duplicating them. <span class=\"nobr\">Print-Table</span> uses it.",
+    "oss.decision": "<b>No silent overwrites:</b> the server keeps each record's version and applies a change only if the record is still at the version it was made on. If another device changed it first, the change comes back as a conflict; device clocks are never compared.",
+    "oss.c1": "Durable, ordered queue: saved after every step with an atomic write, so a crash never leaves it half-written",
+    "oss.c2": "Idempotent retries with an id per operation, and exponential backoff with jitter between attempts",
+    "oss.c3": "13 tests, including one that reproduces the data loss of deciding by modification time; CI runs format, analysis and tests",
+    "oss.role": "<b>Role:</b> Author · design, code and tests",
+    "oss.cta": "View on GitHub",
+    "oss.code1": "// edited offline (version 4)",
+    "oss.code2": "// back online",
+    "oss.code3": "// show both versions",
+    "oss.caption": "Package usage · public code",
 
 
     /* ---- Proceso ---- */
